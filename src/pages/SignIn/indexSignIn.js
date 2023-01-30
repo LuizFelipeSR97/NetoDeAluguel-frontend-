@@ -6,9 +6,10 @@ import { SignIn } from '../../hooks/useSignIn';
 import UserContext from '../../contexts/UserContext';
 
 export default function SignInPage() {
-    const { setUserData } = useContext(UserContext);
+    const { userData, setUserData } = useContext(UserContext);
     const [errorText, setErrorText] = useState('');
     const navigate = useNavigate();
+    console.log(userData)
 
     async function handleSubmit(e) {
 
@@ -24,7 +25,7 @@ export default function SignInPage() {
             setErrorText('Login e/ou senha inválidos. Tente novamente!')
         } else {
             setUserData(loggedUser);
-            navigate('/my-profile');
+            navigate(`/user/${loggedUser.user.id}`);
         }
 
     }
@@ -32,7 +33,7 @@ export default function SignInPage() {
     return (
         <Page>
             <Content>
-                <img src={logo}/>
+                <img src={logo} alt=''/>
                 <Form onSubmit={handleSubmit}>
                     <input name='email' placeholder='E-mail' type='email' required/>
                     <input name='password' placeholder='Senha' type='password' required/>

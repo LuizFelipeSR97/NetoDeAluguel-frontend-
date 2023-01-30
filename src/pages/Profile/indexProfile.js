@@ -1,139 +1,139 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import logo from '../../assets/images/logo-NDA.png';
-import { SignIn } from '../../hooks/useSignIn';
+import genericPhoto from '../../assets/images/generic-person.png';
+import UserContext from '../../contexts/UserContext';
+import dayjs from 'dayjs';
+import { GetUserInfo } from '../../hooks/useGetUserInfo';
+import { GetUserServices } from '../../hooks/useUserServices';
+import TopBarComponent from '../../components/indexTopBar';
+import BottomBarComponent from '../../components/indexBottomBar';
 
-export default function SignInPage() {
-    const userExists = true;
-    const [errorText, setErrorText] = useState('');
-    const navigate = useNavigate();
+export default function ProfilePage() {
 
-    async function handleSubmit(e) {
+    const { id } = useParams();
+    const { userData, setUserData } = useContext(UserContext);
+    const [userProfileData, setUserProfileData] = useState({user: {id: false}});
+    const [userServices, setUserServices] = useState({helper: [], requester: []});
+    const dependency = userProfileData.user.id;
 
-        e.preventDefault();
+    useEffect(()=>{
+        getUserInfo();
+        getServices()
+    },[dependency]);
 
-        const user = {email: e.target.email.value, password: e.target.password.value};
+    async function getUserInfo(){
+        const response = await GetUserInfo(id);
+        setUserProfileData(response);
+    }
 
-        const loggedUser = await SignIn(user);
-
-        if (loggedUser.name==='AxiosError'){
-            e.target.email.value = '';
-            e.target.password.value = '';
-            setErrorText('Login e/ou senha inválidos. Tente novamente!')
-        } else {
-            navigate('/')
+    async function getServices(){
+        if (userProfileData.user.id){
+            const response = await GetUserServices(userProfileData.user.id)
+            setUserServices(response)
         }
-
     }
 
     return (
         <Page>
+            <TopBarComponent userData={userData} setUserData={setUserData}/>
             <Content>
-                <img src={logo}/>
-                <Form onSubmit={handleSubmit}>
-                    <input name='email' placeholder='E-mail' type='email' required/>
-                    <input name='password' placeholder='Senha' type='password' required/>
-                    <a href="/sign-up">
-                        Ainda não tem uma conta? Faça o cadastro aqui!
-                    </a>
-                    <ErrorSpace>
-                        {errorText}
-                    </ErrorSpace>
-                    <Button>
-                        Login
-                    </Button>
-                </Form>
-            </Content>            
+                <div className='photo'>
+                    <h1>Informações do usuário</h1>
+                    <img src={genericPhoto} alt=''/>
+                </div>
+                <div className='info'>
+                    <div className='left'>
+                        <h2>Nome:</h2>
+                        <h2>Membro desde:</h2>
+                        <h2>Tipo de usuário:</h2>
+                        <h2>Perguntas feitas:</h2>
+                        <h2>Perguntas respondidas:</h2>
+                        <h2>Status:</h2>
+                    </div>
+                    { !userProfileData.user.id ?
+                    <></>
+                    :
+                    <div className='right'>
+                        <h2>{userProfileData.user.name} {userProfileData.user.surname}</h2>
+                        <h2>{dayjs(userProfileData.user.createdAt).format('DD/MM/YYYY')}</h2>
+                        <h2>{userProfileData.user.userTypes.name}</h2>
+                        <h2>{userServices.requester.length}</h2>
+                        <h2>{userServices.helper.length}</h2>
+                        <h2>{userProfileData.user.usersStatus.name}</h2>
+                    </div>}
+                </div>
+            </Content>
+            <BottomBarComponent />
         </Page>
     )
 }
 
 const Page = styled.div`
-    background-color: #CECECE;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const Content = styled.div`
-    background-color: #F8F4EA;
-    width: 500px;
-    height: 850px;
+    background-color: #EDEDED;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 20px;
-    box-shadow: 0px 4px 24px #000000;    
-
-    img{
-        width: 400px;
-        margin: 40px 0;
-    }
-
-    a:-webkit-any-link {
-        margin: 40px 0;
-    }
-`;
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 40px;
-
-    input{
-        width: 400px;
-        height: 60px;
-        margin-bottom: 10px;
-        padding-left: 30px;
-        color: black;
-        font-size: 20px;
-        border: 1px solid #000000;
-        border-radius: 8px;
-        font-family: 'Lexend Deca', sans-serif;
-    }
 
     a:-webkit-any-link {
         text-decoration: none;
-        font-size: 16px;
-        font-weight: 700;
-        color: #579BB1;
-        margin-top: 10px;
-        margin-bottom: 0;
-    }
-
-    input::placeholder{
-        color: #9C9C9C;
-        font-size: 20px;
-        font-family: 'Lexend Deca', sans-serif;  
     }
 `;
 
-const Button = styled.button`
-    width: 250px;
-    height: 60px;
-    background: #579BB1;
-    border-radius: 8px;
-    color: white;
-    font-weight: 700;
-    font-size: 20px;
+const Content = styled.div`
+    background-color: #F3F3F3;
+    width: 1200px;
+    height: 850px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 5px;
-    border: solid 1px #579BB1;
-    border-radius: 12px;
-    cursor: pointer;
-`;
+    flex-direction: column;
+    margin-top: 70px;
 
-const ErrorSpace = styled.div`
-    text-align: center;
-    width: 450px;
-    height: 30px;
-    color: #515151;
-    margin: 20px 0 200px 0;
-    font-size: 20px;
+    .photo{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 50px;
+        margin-top: 20px;
+
+        img{
+            justify-content: center;
+            width: 200px;
+            border: 1px solid #cecece;
+            margin-top: 50px;
+        }
+    }
+
+    .info{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .left{
+        width: 40%;
+        margin-right: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-weight: 700;
+    }
+
+    .right{
+        width: 40%;
+        margin-left: 10px;
+    }
+
+    h1{
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    h2{
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
 `;

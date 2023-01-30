@@ -35,7 +35,7 @@ export default function SignInPage() {
     return (
         <Page>
             <Content>
-                <img src={logo}/>
+                <img src={logo} alt=''/>
                 <Form onSubmit={handleSubmit}>
                     <input name='name' placeholder='Nome' type='name' required/>
                     <input name='email' placeholder='E-mail' type='email' required/>
