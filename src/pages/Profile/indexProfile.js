@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import genericPhoto from '../../assets/images/generic-person.png';
 import UserContext from '../../contexts/UserContext';
@@ -16,6 +16,7 @@ export default function ProfilePage() {
     const [userProfileData, setUserProfileData] = useState({user: {id: false}});
     const [userServices, setUserServices] = useState({helper: [], requester: []});
     const dependency = userProfileData.user.id;
+    const navigate = useNavigate();
 
     useEffect(()=>{
         getUserInfo();
@@ -63,6 +64,7 @@ export default function ProfilePage() {
                         <h2>{userProfileData.user.usersStatus.name}</h2>
                     </div>}
                 </div>
+                {userProfileData.user.id===userData.user.id ? <Button onClick={()=>navigate('/my-account')}>Alterar dados</Button> : <></>}
             </Content>
             <BottomBarComponent />
         </Page>
@@ -137,3 +139,16 @@ const Content = styled.div`
         margin-bottom: 10px;
     }
 `;
+
+const Button = styled.div`
+    background-color: #d8d8d8;
+    font-size: 20px;
+    padding: 5px 15px;
+    margin-top: 40px;
+    border: 1px solid #BCBDBF;
+    cursor: pointer;
+
+    :hover{
+        background-color: #BCBDBF;
+    }
+`

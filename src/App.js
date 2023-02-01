@@ -11,6 +11,7 @@ import ProfilePage from './pages/Profile/indexProfile';
 import OpenServicesPage from './pages/Services/indexOpenServices';
 import UserServicesPage from './pages/Services/indexUserServices';
 import ServiceInfoPage from './pages/Services/indexServiceInfo';
+import MyAccountPage from './pages/Profile/indexMyAccount';
 
 import { UserProvider } from './contexts/UserContext';
 
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="/services/open" element={<OpenServicesPage />} />
                 <Route path="/services/:userId" element={<UserServicesPage />} />
                 <Route path="/service/:id" element={<ServiceInfoPage />} />
+                <Route path="/my-account" element={<MyAccountPage />} />
               </Routes>
           </Router>
         </UserProvider>

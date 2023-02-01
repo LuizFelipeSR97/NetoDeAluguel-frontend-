@@ -24,14 +24,25 @@ export default function MenuComponent({userData, setUserData}){
 
 return (
 <>
-    <Menu>
-        <h2>Olá, <strong>{userData.user.name}</strong></h2>
-        <a href={`/user/${userData.user.id}`}><h1>Minha Conta</h1></a>
-        <a href={`/services/${userData.user.id}`}><h1>Minhas Solicitações</h1></a>
-        <a href={`/messages/${userData.user.id}`}><h1>Minhas Mensagens</h1></a>
-        <h1 onClick={logoff}>Sair da Conta</h1>
-    </Menu>
-    <BackgroundScreen onClick={toggleMenu}/>
+    {userData.user ? 
+    <>
+        <Menu>
+            <h2>Olá, <strong>{userData.user.name}</strong></h2>
+            <a href={`/user/${userData.user.id}`}><h1>Minha Conta</h1></a>
+            <a href={`/services/${userData.user.id}`}><h1>Minhas Solicitações</h1></a>
+            <a href={`/messages/${userData.user.id}`}><h1>Minhas Mensagens</h1></a>
+            <h1 onClick={logoff}>Sair da Conta</h1>
+        </Menu>
+        <BackgroundScreen onClick={toggleMenu}/>
+    </>
+    :
+    <>
+        <Menu>
+            <a href={`/sign-in`}><h1>Fazer login</h1></a>
+            <a href={`/sign-up`}><h1>Fazer cadastro</h1></a>
+        </Menu>
+        <BackgroundScreen onClick={toggleMenu}/>
+    </>}
 </>
 )}
 
@@ -50,20 +61,23 @@ const Menu = styled.div`
     flex-direction: column;
     align-items: flex-end;
     padding-right: 20px;
-    transition: 500s linear; 
+    padding-top: 50px;
 
     h1{
-        margin-top: 40px;
         font-size: 30px;
         cursor: pointer;
     }
 
     h2{
-        margin-top: 40px;
         font-size: 30px;
         color: gray;
         cursor: default;
-        margin-bottom: 40px;
+        margin-bottom: 60px;
+    }
+
+    a{
+        height: 35px;
+        margin-bottom: 30px;
     }
 `;
 

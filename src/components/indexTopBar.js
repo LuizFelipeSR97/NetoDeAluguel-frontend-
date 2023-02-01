@@ -17,7 +17,7 @@ export default function TopBarComponent({userData, setUserData}){
 
     return (
         <>
-            {(menuVisibility==='visible' && userData.user) ?
+            {(menuVisibility==='visible') ?
                 <MenuComponent userData={userData} setUserData={setUserData}/>
                 :
                 <></>}
