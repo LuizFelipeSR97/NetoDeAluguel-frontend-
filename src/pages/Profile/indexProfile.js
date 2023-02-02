@@ -64,7 +64,7 @@ export default function ProfilePage() {
                         <h2>{userProfileData.user.usersStatus.name}</h2>
                     </div>}
                 </div>
-                {userProfileData.user.id===userData.user.id ? <Button onClick={()=>navigate('/my-account')}>Alterar dados</Button> : <></>}
+                {userProfileData.user.id===userData.user.id ? <Button onClick={()=>navigate('/my-account')}>Alterar dados</Button> : <Button onClick={()=>alert('criar funcao pra ir pra conversa')}>Conversar</Button>}
             </Content>
             <BottomBarComponent />
         </Page>

@@ -12,6 +12,8 @@ import OpenServicesPage from './pages/Services/indexOpenServices';
 import UserServicesPage from './pages/Services/indexUserServices';
 import ServiceInfoPage from './pages/Services/indexServiceInfo';
 import MyAccountPage from './pages/Profile/indexMyAccount';
+import MyConversationsPage from './pages/Messages/indexMyConversations';
+import MessagesPage from './pages/Messages/indexMessages';
 
 import { UserProvider } from './contexts/UserContext';
 
@@ -30,6 +32,8 @@ export default function App() {
                 <Route path="/services/:userId" element={<UserServicesPage />} />
                 <Route path="/service/:id" element={<ServiceInfoPage />} />
                 <Route path="/my-account" element={<MyAccountPage />} />
+                <Route path="/my-messages" element={<MyConversationsPage />} />
+                <Route path="/conversation/:conversationId" element={<MessagesPage />} />
               </Routes>
           </Router>
         </UserProvider>

@@ -2,63 +2,77 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import UserContext from '../../contexts/UserContext';
-import { GetOpenServices } from '../../hooks/useOpenServices';
+import dayjs from 'dayjs';
 import TopBarComponent from '../../components/indexTopBar';
 import BottomBarComponent from '../../components/indexBottomBar';
+import { GetAllConversations } from '../../hooks/useGetConversations';
+import { GetAllMessages } from '../../hooks/useGetAllMessages';
 
-export default function OpenServicesPage() {
+export default function MyConversationsPage() {
 
-    const [openServices, setOpenServices] = useState([]);
-    const dependency = (openServices.length===0)
+    const { userData, setUserData } = useContext(UserContext);
+    const [userConversations, setUserConversations] = useState([]);
+    const [userMessages, setUserMessages] = useState([]);
+    const [pages, setPages] = useState({});
+    const navigate = useNavigate();
+    const dependency = (userConversations.length===0)
 
     useEffect(()=>{
-        getOpenServices();
+        getAllUserConversations();
+        getAllUserMessages();
         countPages();
     },[dependency]);
 
-    const { userData, setUserData } = useContext(UserContext);
-    const [pages, setPages] = useState({});
-    const navigate = useNavigate();
-    console.log(openServices)
+    async function getAllUserConversations(){
+        const response = await GetAllConversations(userData.user.id);
+        setUserConversations(response);
+    }
 
-    async function getOpenServices(){
-        const response = await GetOpenServices();
-        setOpenServices(response);
+    async function getAllUserMessages(){
+        const response = await GetAllMessages(userData.user.id);
+        response.sort((b,a) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))
+        console.log(response)
+        setUserMessages(response);
     }
 
     function countPages(){
-        const countServices = openServices.length;
+        const countMessages = userConversations.length;
         let currentPage = 1;
         let maxPage = 1;
 
-        if (countServices>0){
-            if (countServices%5>0){
-                maxPage=Math.floor(countServices/5)+1;
+        if (countMessages>0){
+            if (countMessages%5>0){
+                maxPage=Math.floor(countMessages/5)+1;
             } else {
-            maxPage=Math.floor(countServices/5);
+                maxPage=Math.floor(countMessages/5);
             }
         }
 
         setPages({currentPage, maxPage});
     }
 
+    console.log(userConversations)
+    console.log(userMessages)
+
     return (
         <Page>
             <TopBarComponent userData={userData} setUserData={setUserData}/>
             <Content>
-                <div className="list">
-                    <h1>Serviços Abertos</h1>
-                    {openServices.length===0 ?
-                    <>Não existem serviços em aberto. Tente novamente mais tarde!</> 
-                    : <>{openServices.map((service, index) => (index>pages.currentPage*5-6 && index<pages.currentPage*5) ?
-                    <div onClick={()=>navigate(`/service/${service.id}`)} className="service">
+            <div className="list">
+                    <h1>Minhas Conversas</h1>
+                    {!userConversations[1]?
+                    <>Não existem mensagens ainda. Comece uma conversa com alguém e ela aparecerá aqui.</> 
+                    : <>{userConversations.map((conversation, index) => (index>pages.currentPage*5-6 && index<pages.currentPage*5) ?
+                    <div onClick={()=>navigate(`/conversation/${conversation.id}`)} className="conversation">
                         <div className="question">
-                            <h1>Dúvida: </h1>
-                            <h2>{service.name}</h2>
+                            <h1>Usuário: </h1>
+                            <h2>{conversation.helper.id === userData.user.id ? conversation.requester.name +' '+conversation.requester.surname : conversation.helper.name +' '+conversation.helper.surname}</h2>
                         </div>
                         <div className="description">
-                            <h1>Observação:</h1>
-                            <h2>{service.description}</h2>
+                            <h1>Mensagens:</h1>
+                            <div className="messages">
+                            {userMessages.map((message)=>(message.conversationId===conversation.id ? <h2>[{message.senderUser.name}] {message.text}</h2> : <></>))}
+                            </div>
                         </div>
                     </div>
                     :
@@ -112,7 +126,7 @@ const Content = styled.div`
         }
     }
 
-    .service{
+    .conversation{
         width: 600px;
         height: 105px;
         padding: 10px 20px;
@@ -132,7 +146,7 @@ const Content = styled.div`
             overflow: hidden;
 
             h1{
-                margin-left: 44px;
+                margin-left: 30px;
                 margin-top: 1px;
             }
         }
@@ -158,7 +172,7 @@ const Content = styled.div`
         }
     }
 
-    .service:hover{
+    .conversation:hover{
         background-color: #E2E2E2;
     }
 
@@ -178,6 +192,19 @@ const Content = styled.div`
             font-size: 18px;
             color: blue;
             cursor: pointer;
+        }
+    }
+
+    .messages{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+
+        h2{
+            color: gray;
+            margin-bottom: 10px;
+            font-size: 18px;
         }
     }
 `;

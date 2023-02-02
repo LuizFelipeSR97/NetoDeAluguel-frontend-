@@ -30,7 +30,7 @@ return (
             <h2>Olá, <strong>{userData.user.name}</strong></h2>
             <a href={`/user/${userData.user.id}`}><h1>Minha Conta</h1></a>
             <a href={`/services/${userData.user.id}`}><h1>Minhas Solicitações</h1></a>
-            <a href={`/messages/${userData.user.id}`}><h1>Minhas Mensagens</h1></a>
+            <a href={`/my-messages`}><h1>Minhas Conversas</h1></a>
             <h1 onClick={logoff}>Sair da Conta</h1>
         </Menu>
         <BackgroundScreen onClick={toggleMenu}/>
